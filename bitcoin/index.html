@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin Payment Required</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #0f0;
+            font-family: "Courier New", Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        h1, h2 {
+            margin: 10px 0;
+        }
+
+        .qr-code {
+            margin: 20px 0;
+        }
+
+        #timer {
+            font-size: 24px;
+            margin: 20px 0;
+            color: red;
+        }
+
+        .address {
+            margin: 10px 0;
+            font-size: 16px;
+            word-wrap: break-word;
+            max-width: 90%;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pago Requerido</h1>
+    <h2>Envia el Bitcoin a la siguiente cartera:</h2>
+    <div class="address">1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</div>
+    <h2>Cantidad: 10 BTC</h2>
+    <div id="timer">00:30:00</div>
+    <footer>
+        <p>No hacer el pago tendrá duras consecuencias</p>
+    </footer>
+    <script>
+        // Temporizador de cuenta regresiva
+        let timeLeft = 30 * 60; // 30 minutos en segundos
+
+        const timerElement = document.getElementById("timer");
+
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            if (timeLeft > 0) {
+                timeLeft--;
+                setTimeout(updateTimer, 1000);
+            } else {
+                timerElement.textContent = "TIME EXPIRED";
+                timerElement.style.color = "red";
+            }
+        }
+
+        updateTimer();
+    </script>
+</body>
+</html>

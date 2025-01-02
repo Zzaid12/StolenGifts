@@ -3,79 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bitcoin Payment Required</title>
+    <title>Ransom Request</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            background-color: #000;
-            color: #0f0;
-            font-family: "Courier New", Courier, monospace;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background-color: black;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
             text-align: center;
+            padding: 20px;
         }
-
-        h1, h2 {
-            margin: 10px 0;
+        h1 {
+            font-size: 3em;
         }
-
-        .qr-code {
-            margin: 20px 0;
+        .hidden-button {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: #00ff00;
+            cursor: pointer;
+            font-size: 0.8em;
+            text-decoration: underline;
         }
-
-        #timer {
-            font-size: 24px;
-            margin: 20px 0;
-            color: red;
+        .login-form {
+            display: none;
+            margin-top: 20px;
         }
-
-        .address {
-            margin: 10px 0;
-            font-size: 16px;
-            word-wrap: break-word;
-            max-width: 90%;
+        input {
+            background-color: black;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 5px;
+            margin: 5px;
         }
-
-        footer {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #888;
+        button {
+            background-color: #00ff00;
+            color: black;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .success-message {
+            display: none;
+            color: #00ff00;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Pago Requerido</h1>
-    <h2>Envia el Bitcoin a la siguiente cartera:</h2>
-    <div class="address">1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</div>
-    <h2>Cantidad: 10 BTC</h2>
-    <div id="timer">00:30:00</div>
-    <footer>
-        <p>No hacer el pago tendrá duras consecuencias</p>
-    </footer>
+    <h1>TENEMOS TUS REGALOS</h1>
+    <p>Si quieres recuperarlos deposita 10 Bitcoins en la siguiente direccion:</p>
+    <p><strong>1HackerAddress123456789</strong></p>
+    <p>Si no se paga el rescate las consecuencias serán fatales.</p>
+
+    <button class="hidden-button" onclick="showLogin()">Panel de Control de Acceso</button>
+
+    <div class="login-form" id="loginForm">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="@stolengifts2025" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button onclick="validateLogin()">Submit</button>
+    </div>
+
+    <p class="success-message" id="successMessage">Access Granted.</p>
+
     <script>
-        // Temporizador de cuenta regresiva
-        let timeLeft = 30 * 60; // 30 minutos en segundos
-
-        const timerElement = document.getElementById("timer");
-
-        function updateTimer() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            if (timeLeft > 0) {
-                timeLeft--;
-                setTimeout(updateTimer, 1000);
-            } else {
-                timerElement.textContent = "TIME EXPIRED";
-                timerElement.style.color = "red";
-            }
+        function showLogin() {
+            document.getElementById('loginForm').style.display = 'block';
         }
 
-        updateTimer();
+        function validateLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (password === '0310') {
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = 'menu/index.html';
+                }, 500);
+            } else {
+                alert('Incorrect username or password.');
+            }
+        }
     </script>
 </body>
 </html>

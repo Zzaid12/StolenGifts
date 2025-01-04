@@ -3,52 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu</title>
+    <title>Sortable Carousel</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <style>
+        /* Global Styles */
         body {
             margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-            color: #333;
+            background: linear-gradient(to bottom, #000000, #0a0a0a);
+            color: #00ff88;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+        }
+
+        h1, p {
+            text-align: center;
+            margin: 0;
         }
 
         h1 {
-            margin-bottom: 20px;
+            margin-top: 20px;
+            font-size: 3.5em;
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 10px #00ff88, 0 0 20px #008844;
+            animation: glitch 1.5s infinite;
         }
 
-        ul {
-            list-style-type: none;
-            padding: 0;
+        p {
+            font-size: 1.2em;
+            margin-top: 10px;
+            color: #00cc66;
         }
 
-        li {
-            margin: 10px 0;
+        /* Carousel Container */
+        .carousel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 40px auto;
+            overflow-x: auto;
+            gap: 30px;
+            padding: 20px;
+            scroll-behavior: smooth;
         }
 
-        a {
-            text-decoration: none;
-            color: #007bff;
-            font-size: 18px;
+        .carousel::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for cleaner look */
         }
 
-        a:hover {
-            text-decoration: underline;
+        /* Carousel Items */
+        .carousel-item {
+            width: 140px;
+            height: 140px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 3px solid rgba(0, 255, 136, 0.5);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .carousel-item:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.8), 0 0 30px rgba(0, 200, 100, 0.6);
+        }
+
+        .carousel-item img {
+            max-width: 100px;
+            max-height: 100px;
+            filter: drop-shadow(0 0 10px #00ff88);
+        }
+
+        /* Subtle Glitch Effect */
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 red, -2px 0 blue; }
+            25% { text-shadow: -2px 0 red, 2px 0 blue; }
+            50% { text-shadow: 2px 0 red, -2px 0 blue; }
+            75% { text-shadow: -2px 0 red, 2px 0 blue; }
+            100% { text-shadow: 2px 0 red, -2px 0 blue; }
+        }
+
+        /* Background Animation */
+        .matrix {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .matrix div {
+            position: absolute;
+            bottom: 100%;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(transparent, rgba(0, 255, 136, 0.3));
+            animation: fall linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes fall {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(100%);
+            }
+        }
+
+        /* Error Popup Styles */
+        #errorPopup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #ff0000;
+            padding: 30px;
+            border-radius: 10px;
+            display: none;
+            text-align: center;
+            font-size: 1.5em;
+            box-shadow: 0 0 20px #ff0000;
+        }
+
+        #errorPopup input {
+            margin-top: 15px;
+            padding: 10px;
+            font-size: 1.2em;
+            width: 100px;
+            text-align: center;
+        }
+
+        #errorPopup button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #00cc66;
+            color: rgb(252, 252, 252);
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #errorPopup button:hover {
+            background-color: #009944;
+        }
+
+        #errorPopup .countdown {
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+
+        /* Chat Styles */
+        #chat {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 400px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            display: none;
+            padding: 15px;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+        }
+
+        #chat .messages {
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 1em;
+            color: #00ff88;
+            margin-bottom: 10px;
+        }
+
+        #chat .messages p {
+            margin: 5px 0;
+        }
+
+        #chat input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #00ff88;
+            background: transparent;
+            color: #00ff88;
+        }
+
+        #chat input::placeholder {
+            color: rgba(0, 255, 136, 0.5);
+        }
+
+        .typing {
+            color: rgba(0, 255, 136, 0.6);
+            font-style: italic;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
-    <h1>Bienvenido al Menú</h1>
-    <ul>
-        <li><a href="#opcion1">Opción 1</a></li>
-        <li><a href="#opcion2">Opción 2</a></li>
-        <li><a href="#opcion3">Opción 3</a></li>
-        <li><a href="/">Volver al Inicio</a></li>
-    </ul>
+    <div class="matrix" id="matrix"></div>
+
+    <h1>Perfil del Hacker</h1>
+    <p>Investiga los regalos robados y resuelve los enigmas para recuperarlos.</p>
+
+    <div class="carousel" id="sortable">
+        <div class="carousel-item">
+            <img src="interro.png" alt="Regalo 1">
+        </div>
+        <div class="carousel-item">
+            <img src="interro.png" alt="Regalo 2">
+        </div>
+        <div class="carousel-item">
+            <img src="interro.png" alt="Regalo 3">
+        </div>
+    </div>
+
+    <!-- Error Popup -->
+    <div id="errorPopup">
+        <p>Peligro de intrusión!!</p>
+        <p>T3 HEMOS PILLAD0!!! TIENES TRE1NTA SEGUNDO5 P4RA INTRODUCIR EL CO6IGO SECRETO</p>
+        <input type="text" id="codeInput" placeholder="Código">
+        <button id="confirmButton">Confirmar</button>
+        <p class="countdown" id="countdown">30</p>
+    </div>
+
+    <!-- Chat Window -->
+    <div id="chat">
+        <div class="messages" id="messages">
+            <p>Unknown$: ¿Hola?</p>
+        </div>
+        <input type="text" id="chatInput" placeholder="Escribe tu mensaje...">
+    </div>
+
+    <script>
+        // Matrix Animation
+        const matrix = document.getElementById('matrix');
+        for (let i = 0; i < 150; i++) {
+            const column = document.createElement('div');
+            column.style.left = `${Math.random() * 100}%`;
+            column.style.animationDuration = `${Math.random() * 2 + 3}s`;
+            column.style.animationDelay = `${Math.random() * 5}s`;
+            matrix.appendChild(column);
+        }
+
+        // Popup and Timer Logic
+        setTimeout(function() {
+            document.getElementById('errorPopup').style.display = 'block';
+
+            let countdown = 30;
+            const countdownElement = document.getElementById('countdown');
+            const codeInput = document.getElementById('codeInput');
+            const confirmButton = document.getElementById('confirmButton');
+
+            // Countdown timer
+            const timerInterval = setInterval(function() {
+                countdown--;
+                countdownElement.textContent = countdown;
+
+                if (countdown === 0) {
+                    clearInterval(timerInterval);
+                    alert("Tiempo agotado. El sistema ha sido bloqueado.");
+                    // Redirigir o cerrar la página después del tiempo agotado
+                }
+            }, 1000);
+
+            // Check the code when the button is clicked
+            confirmButton.addEventListener('click', function() {
+                if (codeInput.value === '301546') {
+                    clearInterval(timerInterval);
+                    document.getElementById('errorPopup').style.display = 'none';
+                    document.getElementById('chat').style.display = 'block';
+                } else {
+                    alert("Código incorrecto.");
+                }
+            });
+        }, 1000);
+
+        // Chat Logic
+        const chatInput = document.getElementById('chatInput');
+        const messages = document.getElementById('messages');
+
+        function simulateTypingAndReply(reply, callback) {
+            const typingIndicator = document.createElement('p');
+            typingIndicator.className = 'typing';
+            typingIndicator.textContent = 'Ayudante está escribiendo...';
+            messages.appendChild(typingIndicator);
+            messages.scrollTop = messages.scrollHeight;
+
+            setTimeout(() => {
+                typingIndicator.remove();
+                const message = document.createElement('p');
+                message.innerHTML = `<strong>Ayudante:</strong> ${reply}`;
+                messages.appendChild(message);
+                messages.scrollTop = messages.scrollHeight;
+                if (callback) callback();
+            }, 2000); // Adjust the delay here if needed
+        }
+
+        let step = 0;
+        const conversation = [
+            "Hola jefe, perdón por el susto, pero teníamos que asegurarnos que eras tú, nos ha parecido sospechosa la IP desde la que te has conectado. ¿Va todo bien?",
+            "Perfecto entonces. Conseguimos hacernos con el regalo que nos pediste, lo tienes escondido en la mochila, avísame cuando lo tengas.",
+            "Genial, quedo a tu disposición para lo que necesites. Adiós."
+        ];
+
+        chatInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && chatInput.value.trim() !== '') {
+                const userMessage = chatInput.value;
+                const userReply = document.createElement('p');
+                userReply.innerHTML = `<strong>Tú:</strong> ${userMessage}`;
+                messages.appendChild(userReply);
+                chatInput.value = '';
+
+                if (step < conversation.length) {
+                    simulateTypingAndReply(conversation[step], () => {
+                        step++;
+                        if (step === conversation.length) {
+                            setTimeout(() => {
+                                document.getElementById('chat').style.display = 'none';
+                            }, 6000); // Increased delay before chat closes
+                        }
+                    });
+                }
+            }
+        });
+
+        // Sortable Carousel
+        $(function() {
+            $("#sortable").sortable({
+                axis: "x",
+                containment: "parent",
+                tolerance: "pointer",
+                revert: true
+            });
+            $("#sortable").disableSelection();
+        });
+    </script>
 </body>
 </html>

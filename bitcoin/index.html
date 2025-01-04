@@ -6,15 +6,23 @@
     <title>Ransom Request</title>
     <style>
         body {
-            background-color: black;
+            margin: 0;
+            background: url('https://www.transparenttextures.com/patterns/black-twill.png'), black;
             color: #00ff00;
             font-family: 'Courier New', Courier, monospace;
             text-align: center;
-            padding: 20px;
+            overflow: hidden;
         }
+
         h1 {
             font-size: 3em;
+            animation: glitch 1.5s infinite;
         }
+
+        p {
+            animation: fadeIn 3s ease-in-out;
+        }
+
         .hidden-button {
             position: absolute;
             bottom: 10px;
@@ -25,33 +33,97 @@
             cursor: pointer;
             font-size: 0.8em;
             text-decoration: underline;
+            z-index: 100;
         }
+
         .login-form {
             display: none;
             margin-top: 20px;
         }
+
         input {
             background-color: black;
             border: 1px solid #00ff00;
             color: #00ff00;
-            padding: 5px;
-            margin: 5px;
+            padding: 10px;
+            margin: 10px;
+            font-size: 1em;
+            width: calc(100% - 40px);
+            max-width: 300px;
         }
+
         button {
             background-color: #00ff00;
             color: black;
             border: none;
-            padding: 5px 10px;
+            padding: 10px 20px;
+            font-size: 1em;
             cursor: pointer;
+            transition: all 0.3s;
         }
+
+        button:hover {
+            background-color: black;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+        }
+
         .success-message {
             display: none;
             color: #00ff00;
             margin-top: 20px;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 red, -2px 0 blue; }
+            25% { text-shadow: -2px 0 red, 2px 0 blue; }
+            50% { text-shadow: 2px 0 red, -2px 0 blue; }
+            75% { text-shadow: -2px 0 red, 2px 0 blue; }
+            100% { text-shadow: 2px 0 red, -2px 0 blue; }
+        }
+
+        .matrix {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .matrix div {
+            position: absolute;
+            bottom: 100%;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(transparent, #00ff00);
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(100%);
+            }
         }
     </style>
 </head>
 <body>
+    <div class="matrix" id="matrix"></div>
+
     <h1>TENEMOS TUS REGALOS</h1>
     <p>Si quieres recuperarlos deposita 10 Bitcoins en la siguiente direccion:</p>
     <p><strong>1HackerAddress123456789</strong></p>
@@ -81,11 +153,21 @@
                 document.getElementById('loginForm').style.display = 'none';
                 document.getElementById('successMessage').style.display = 'block';
                 setTimeout(() => {
-                    window.location.href = 'menu/index.html';
+                    window.location.href = 'https://zzaid12.github.io/StolenGifts/menu/index.html';
                 }, 500);
             } else {
                 alert('Incorrect username or password.');
             }
+        }
+
+        // Matrix animation
+        const matrix = document.getElementById('matrix');
+        for (let i = 0; i < 100; i++) {
+            const column = document.createElement('div');
+            column.style.left = `${Math.random() * 100}%`;
+            column.style.animationDuration = `${Math.random() * 2 + 3}s`;
+            column.style.animationDelay = `${Math.random() * 5}s`;
+            matrix.appendChild(column);
         }
     </script>
 </body>

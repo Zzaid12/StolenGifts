@@ -7,8 +7,8 @@
     <style>
         body {
             margin: 0;
-            background: url('https://www.transparenttextures.com/patterns/black-twill.png'), black;
-            color: #00ff00;
+            color: #00ff88;
+            background: linear-gradient(to bottom, #000000, #0a0a0a);
             font-family: 'Courier New', Courier, monospace;
             text-align: center;
             overflow: hidden;
@@ -29,7 +29,7 @@
             right: 10px;
             background: transparent;
             border: none;
-            color: #00ff00;
+            color: #00ff88;
             cursor: pointer;
             font-size: 0.8em;
             text-decoration: underline;
@@ -43,8 +43,8 @@
 
         input {
             background-color: black;
-            border: 1px solid #00ff00;
-            color: #00ff00;
+            border: 1px solid #00ff88;
+            color: #00ff88;
             padding: 10px;
             margin: 10px;
             font-size: 1em;
@@ -53,7 +53,7 @@
         }
 
         button {
-            background-color: #00ff00;
+            background-color: #00ff88;
             color: black;
             border: none;
             padding: 10px 20px;
@@ -64,13 +64,13 @@
 
         button:hover {
             background-color: black;
-            color: #00ff00;
-            border: 1px solid #00ff00;
+            color: #00ff88;
+            border: 1px solid #00ff88;
         }
 
         .success-message {
             display: none;
-            color: #00ff00;
+            color: #00ff88;
             margin-top: 20px;
             animation: fadeIn 2s ease-in-out;
         }
@@ -92,14 +92,15 @@
             100% { text-shadow: 2px 0 red, -2px 0 blue; }
         }
 
+        /* Background Animation */
         .matrix {
             position: absolute;
             width: 100%;
             height: 100%;
             top: 0;
             left: 0;
-            overflow: hidden;
-            z-index: 0;
+            z-index: -1;
+            pointer-events: none;
         }
 
         .matrix div {
@@ -107,8 +108,9 @@
             bottom: 100%;
             width: 2px;
             height: 100%;
-            background: linear-gradient(transparent, #00ff00);
+            background: linear-gradient(transparent, rgba(0, 255, 136, 0.3));
             animation: fall linear infinite;
+            opacity: 0.5;
         }
 
         @keyframes fall {

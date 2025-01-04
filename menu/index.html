@@ -210,8 +210,8 @@
 <body>
     <div class="matrix" id="matrix"></div>
 
-    <h1>Perfil del Hacker</h1>
-    <p>Investiga los regalos robados y resuelve los enigmas para recuperarlos.</p>
+    <h1>Bienvenido @Hacker</h1>
+    <p>Estos son los regalos robados a la víctimas</p>
 
     <div class="carousel" id="sortable">
         <div class="carousel-item">
@@ -243,6 +243,26 @@
     </div>
 
     <script>
+        // Nuevas imágenes para el carrusel
+        const newImages = [
+            "pet1.png",
+            "pet2.png",
+            "pet3.png"
+        ];
+        // Función para cambiar las imágenes del carrusel
+        function changeCarouselImages() {
+            const carouselItems = document.querySelectorAll('.carousel-item img');
+            for (let i = 0; i < carouselItems.length; i++) {
+                if (newImages[i]) {
+                    carouselItems[i].src = newImages[i];
+                }
+            }
+        }
+        // Detectar cuando el chat se cierra y cambiar las imágenes
+        function closeChatAndChangeImages() {
+            document.getElementById('chat').style.display = 'none';
+            changeCarouselImages();
+        }
         // Matrix Animation
         const matrix = document.getElementById('matrix');
         for (let i = 0; i < 150; i++) {
@@ -314,6 +334,7 @@
             "Genial, quedo a tu disposición para lo que necesites. Adiós."
         ];
 
+        // Modificar la lógica para cerrar el chat
         chatInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter' && chatInput.value.trim() !== '') {
                 const userMessage = chatInput.value;
@@ -327,12 +348,49 @@
                         step++;
                         if (step === conversation.length) {
                             setTimeout(() => {
-                                document.getElementById('chat').style.display = 'none';
-                            }, 6000); // Increased delay before chat closes
+                                closeChatAndChangeImages(); // Llama la nueva función
+                            }, 5000); // Increased delay before chat closes
                         }
                     });
                 }
             }
+        });
+
+         // Función para verificar el orden del carrusel
+        function checkCarouselOrder() {
+            const carouselItems = $("#sortable .carousel-item");
+            const order = [];
+
+            // Recorrer los elementos y guardar el índice original de cada uno
+            carouselItems.each(function () {
+                const originalOrder = $(this).data("order");
+                order.push(originalOrder);
+            });
+
+            // Verificar si el orden es 3, 1, 2
+            if (JSON.stringify(order) === JSON.stringify([3, 2, 1])) {
+                alert("¡Has ordenado los objetos correctamente!");
+            }
+        }
+
+        // Añadir un atributo de orden inicial a los elementos del carrusel
+        $(function () {
+            $("#sortable .carousel-item").each(function (index) {
+                $(this).attr("data-order", index + 1); // Guardar posición original
+            });
+
+            // Detectar cuando se termina de reordenar el carrusel
+            $("#sortable").sortable({
+                axis: "x",
+                containment: "parent",
+                tolerance: "pointer",
+                revert: true,
+                stop: function () {
+                    checkCarouselOrder(); // Verificar el orden después de cada movimiento
+                }
+            });
+
+            $("#sortable").disableSelection();
         });
 
         // Sortable Carousel

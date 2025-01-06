@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sortable Carousel</title>
+    <audio id="alarmSound" src="alarm.mp3"></audio>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
@@ -205,6 +206,41 @@
             font-style: italic;
             margin-top: 5px;
         }
+
+        /* Puzzle Styles */
+        .puzzle-container {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+            color: #00ff88;
+            font-size: 1.5em;
+        }
+
+        .puzzle-container input {
+            background-color: black;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 10px;
+            margin: 10px;
+            font-size: 1em;
+            width: calc(100% - 40px);
+            max-width: 200px;
+        }
+
+        .puzzle-container button {
+            background-color: #00cc66;
+            color: #ffffff;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .puzzle-container button:hover {
+            background-color: #009944;
+        }
     </style>
 </head>
 <body>
@@ -242,7 +278,28 @@
         <input type="text" id="chatInput" placeholder="Escribe tu mensaje...">
     </div>
 
+    <!-- Puzzle Section -->
+    <div class="puzzle-container" id="puzzle">
+        <p><strong>¡Parece que hay un virus, jefe! </strong> Necesitamos tu ayuda para frenarlo:</p>
+        <p>En este PC hay un virus. Al cabo de un minuto, el virus se divide en dos. Y un minuto después, cada uno de esos dos virus se divide otra vez. Ahora son cuatro. A ese ritmo, un solo virus llena la memoria del PC entera exactamente en una hora.
+
+            Sabiendo esto, ¿cuántos minutos crees que tardaría en llenarse la memoria si empezaras con dos virus? </p>
+        <input type="text" id="puzzleAnswer" placeholder="Tu respuesta">
+        <button id="puzzleSubmit">Enviar</button>
+        <p id="puzzleFeedback" style="margin-top: 10px;"></p>
+    </div>
+
     <script>
+
+        document.addEventListener('click', function allowPlay() {
+            const alarm = document.getElementById('alarmSound');
+            alarm.addEventListener('error', function() {
+                console.error("Error al cargar o reproducir el audio.");
+            });
+            alarm.play(); // Esto asegura que el audio esté listo para futuras reproducciones
+            document.removeEventListener('click', allowPlay);
+        });
+
         // Nuevas imágenes para el carrusel
         const newImages = [
             "pet1.png",
@@ -275,13 +332,18 @@
 
         // Popup and Timer Logic
         setTimeout(function() {
-            document.getElementById('errorPopup').style.display = 'block';
-
-            let countdown = 30;
+            const popup = document.getElementById('errorPopup');
+            const alarm = document.getElementById('alarmSound');
             const countdownElement = document.getElementById('countdown');
             const codeInput = document.getElementById('codeInput');
             const confirmButton = document.getElementById('confirmButton');
+            
+            popup.style.display = 'block'; // Muestra el popup
+            alarm.loop = true;            // Configura el audio para que sea repetitivo
+            alarm.play();                 // Inicia la alarma al mismo tiempo que aparece el popup
 
+            let countdown = 30;
+            
             // Countdown timer
             const timerInterval = setInterval(function() {
                 countdown--;
@@ -289,6 +351,7 @@
 
                 if (countdown === 0) {
                     clearInterval(timerInterval);
+                    alarm.pause();
                     alert("Tiempo agotado. El sistema ha sido bloqueado.");
                     // Redirigir o cerrar la página después del tiempo agotado
                 }
@@ -298,6 +361,7 @@
             confirmButton.addEventListener('click', function() {
                 if (codeInput.value === '301546') {
                     clearInterval(timerInterval);
+                    alarm.pause();
                     document.getElementById('errorPopup').style.display = 'none';
                     document.getElementById('chat').style.display = 'block';
                 } else {
@@ -369,7 +433,8 @@
 
             // Verificar si el orden es 3, 1, 2
             if (JSON.stringify(order) === JSON.stringify([3, 2, 1])) {
-                alert("¡Has ordenado los objetos correctamente!");
+                // Mostrar el puzzle
+                document.getElementById('puzzle').style.display = 'block';
             }
         }
 
@@ -393,16 +458,32 @@
             $("#sortable").disableSelection();
         });
 
-        // Sortable Carousel
-        $(function() {
-            $("#sortable").sortable({
-                axis: "x",
-                containment: "parent",
-                tolerance: "pointer",
-                revert: true
-            });
-            $("#sortable").disableSelection();
+        // Lógica del Puzzle
+        // Lógica del Puzzle con Pistas
+        document.getElementById('puzzleSubmit').addEventListener('click', function () {
+            const answer = document.getElementById('puzzleAnswer').value.trim();
+            const feedback = document.getElementById('puzzleFeedback');
+            const pistas = [
+                "Si un virus se convierten en dos, y dos virus se convierten en cuatro, quiere decir que el número de virus se duplica cada minuto.",
+                "Si empiezas con un virus, el virus se multiplica hasta llenar la memoria en una hora. Piensa: ¿cuántos virus tendrás en un minuto si empiezas con un virus?",
+                "Vayamos paso a paso. Tu respuesta es el número de minutos que necesitan dos virus para llenar la memoria. Si un virus necesita un minuto para duplicarse, ¿cuánto tiempo más necesita para llenar la memoria por completo?"
+            ];
+            let pistaIndex = parseInt(feedback.dataset.pistaIndex || '0', 10);
+
+            if (answer === '59') {
+                feedback.textContent = '¡Eso es! Virus frenado. ¿Por qué no miras en el armario? Te he comprado un regalo por ser tan buen jefe :D';
+                feedback.style.color = '#00ff88';
+            } else {
+                feedback.textContent = `Respuesta incorrecta. Intenta de nuevo. ${pistas[pistaIndex] || "Ya no hay más pistas, ¡confía en tu lógica!"}`;
+                feedback.style.color = '#ff0088';
+
+                // Avanzar al siguiente índice de pista, pero detenerse al final del array
+                if (pistaIndex < pistas.length - 1) {
+                    feedback.dataset.pistaIndex = pistaIndex + 1;
+                }
+            }
         });
+
     </script>
 </body>
 </html>
